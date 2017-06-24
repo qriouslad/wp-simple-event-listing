@@ -176,11 +176,20 @@ class event_showcase {
 		
 		//register your content type
 		register_post_type($this->content_type_name, $args);
-		
+
 	}
 
 	// add meta box to save additional meta data for the content type
 	public function add_meta_boxes_for_content_type() {
+
+		add_meta_box(
+			$this->singular_name . '_meta_box', // id
+			ucwords( $this->singular_name ) . ' Information', // box name
+			array( $this, 'display_function_for_content_type_meta_box' ), // display function
+			$this->content_type_name, // content type
+			'normal', // context
+			'default' // priority
+		);
 
 	}
 
