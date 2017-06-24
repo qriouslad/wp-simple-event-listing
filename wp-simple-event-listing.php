@@ -82,6 +82,18 @@ class event_showcase {
 	// enqueue public scripts and styles
 	public function enqueue_public_scripts_and_styles() {
 
+		// public styles
+		wp_enqueue_style(
+			$this->content_type_name . '_public_styles',
+			$this->directory . '/css/' . $this->content_type_name . '_public_styles.css'
+		);
+
+		// public scripts
+		wp_enqueue_script(
+			$this->content_type_name . '_public_scripts',
+			$this->directory . '/js/' . $this->content_type_name, '_public_scripts.js', array('jquery')
+		);
+
 	}
 
 	// enqueue admin scripts and styles
