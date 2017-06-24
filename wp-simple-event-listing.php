@@ -99,6 +99,44 @@ class event_showcase {
 	// enqueue admin scripts and styles
 	public function enqueue_admin_scripts_and_styles() {
 
+		global $pagenow, $post_type;
+
+		// process only on post edit page for custom content type
+		if ( ($post_type == $this->content_type_name ) && ( $pagenow == 'post-new.php' ) || ( $pagenow == 'post.php' ) ) {
+
+			//admin styles
+			wp_enqueue_style(
+				$this->content_type_name . '_public_styles', 
+				$this->directory . '/css/' . $this->content_type_name . '_admin_styles.css'
+			);
+
+			//jquery ui styles for datepicker
+			wp_enqueue_style(
+				$this->content_type_name . '_jquery_ui_style',
+				'//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css'
+			);
+
+			//timepicker styles
+			wp_enqueue_style(
+				'jquery_ui_timepicker_styles',
+				$this->directory . '/css/jquery.ui.timepicker.css'
+			);
+
+			//timepicker script
+			wp_enqueue_script(
+				'jquery_ui_timepicker_script',
+				$this->directory . '/js/jquery.ui.timepicker.js'
+			);		
+
+			//admin scripts (depends on datepicker and timepicker)
+			wp_enqueue_script(
+				$this->content_type_name . '_public_scripts', 
+				$this->directory . '/js/' . $this->content_type_name . '_admin_scripts.js', 
+				array('jquery','jquery-ui-datepicker','jquery_ui_timepicker_script')
+			); 
+
+		}
+
 	}
 
 	// add new content type
