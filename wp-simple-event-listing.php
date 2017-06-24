@@ -41,6 +41,22 @@ class event_showcase {
 	// magic function, called on object instantiation
 	public function __construct() {
 
+		$this->set_directory_value(); // set the directory url on creation
+
+		add_action( 'init', array( $this, 'add_content_type') ); //add content type
+
+		add_action( 'init', array( $this, 'check_flush_rewrite_rules' ) ); // flush re-qrite rules for permalinks
+
+		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes_for_content_type' ) ); // add meta boxes
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public_scripts_and_styles' ) ); // enqueue public scripts and styles
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts_and_styles' ) ); // enqueue admin scripts and styles
+
+		add_action( 'save_post', $this->content_type_name, array( $this, 'save_custom_content_type' )  ); // handle saving of content type meta info
+
+		add_action( 'display_content_type_meta' , array( $this, 'display_additional_meta_data') ); // displays the saved content type meta info
+
 	}
 
 	// sets the directory (path) so that we can use this for enqueuing
