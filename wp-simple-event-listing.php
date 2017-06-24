@@ -23,3 +23,72 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with {Plugin Name}. If not, see {License URI}.
 */
+
+/**
+ * Event Showcase
+ *
+ * Creates an 'event' content type to showcase upcoming events and information.
+ */
+
+class event_showcase {
+
+	// variables;
+	private $directory = '';
+	private $singular_name = 'event';
+	private $plural_name = 'events';
+	private $content_type_name = 'event_showcase';
+
+	// magic function, called on object instantiation
+	public function __construct() {
+
+	}
+
+	// sets the directory (path) so that we can use this for enqueuing
+	public function set_directory_value() {
+
+	}
+
+	// check if we need to flush rewrite rules
+	public function check_flush_rewrite_rules() {
+
+	}
+
+	// enqueue public scripts and styles
+	public function enqueue_public_scripts_and_styles() {
+
+	}
+
+	// enqueue admin scripts and styles
+	public function enqueue_admin_scripts_and_styles() {
+
+	}
+
+	// add new content type
+	public function add_content_type() {
+
+	}
+
+	// add meta box to save additional meta data for the content type
+	public function add_meta_boxes_for_content_type() {
+
+	}
+
+	// display the visual output of the meta box in admin (where we will save our meta data)
+	public function display_function_for_content_type_meta_box($post) {
+
+	}
+
+	// when saving the custom content type, also save additional meta data
+	public function save_custom_content_type($post_id) {
+
+	}
+
+	// @hooked using 'display_additional_meta_data' in theme
+	public function display_additional_meta_data() {
+
+	}
+
+}
+
+// Create new object
+$event_showcase = new event_showcase;
