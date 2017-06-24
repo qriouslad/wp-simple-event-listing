@@ -62,6 +62,8 @@ class event_showcase {
 	// sets the directory (path) so that we can use this for enqueuing
 	public function set_directory_value() {
 
+		$this->directory = plugin_dir_path( __FILE__ );
+
 	}
 
 	// check if we need to flush rewrite rules
