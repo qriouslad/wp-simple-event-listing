@@ -142,6 +142,41 @@ class event_showcase {
 	// add new content type
 	public function add_content_type() {
 
+		 $labels = array(
+	           'name'               => ucwords($this->singular_name),
+	           'singular_name'      => ucwords($this->singular_name),
+	           'menu_name'          => ucwords($this->plural_name),
+	           'name_admin_bar'     => ucwords($this->singular_name),
+	           'add_new'            => ucwords($this->singular_name),
+	           'add_new_item'       => 'Add New ' . ucwords($this->singular_name),
+	           'new_item'           => 'New ' . ucwords($this->singular_name),
+	           'edit_item'          => 'Edit ' . ucwords($this->singular_name),
+	           'view_item'          => 'View ' . ucwords($this->plural_name),
+	           'all_items'          => 'All ' . ucwords($this->plural_name),
+	           'search_items'       => 'Search ' . ucwords($this->plural_name),
+	           'parent_item_colon'  => 'Parent ' . ucwords($this->plural_name) . ':', 
+	           'not_found'          => 'No ' . ucwords($this->plural_name) . ' found.', 
+	           'not_found_in_trash' => 'No ' . ucwords($this->plural_name) . ' found in Trash.',
+	       );
+	       
+	       $args = array(
+	           'labels'            => $labels,
+	           'public'            => true,
+	           'publicly_queryable'=> true,
+	           'show_ui'           => true,
+	           'show_in_nav'       => true,
+	           'query_var'         => true,
+	           'hierarchical'      => false,
+	           'supports'          => array('title','editor','thumbnail'), 
+	           'has_archive'       => true,
+	           'menu_position'     => 20,
+	           'show_in_admin_bar' => true,
+	           'menu_icon'         => 'dashicons-format-status'
+	       );
+		
+		//register your content type
+		register_post_type($this->content_type_name, $args);
+		
 	}
 
 	// add meta box to save additional meta data for the content type
