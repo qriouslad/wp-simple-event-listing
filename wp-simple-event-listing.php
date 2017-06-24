@@ -62,7 +62,7 @@ class event_showcase {
 	// sets the directory (path) so that we can use this for enqueuing
 	public function set_directory_value() {
 
-		$this->directory = plugin_dir_path( __FILE__ );
+		$this->directory = plugin_dir_url( __FILE__ );
 
 	}
 
@@ -85,13 +85,13 @@ class event_showcase {
 		// public styles
 		wp_enqueue_style(
 			$this->content_type_name . '_public_styles',
-			$this->directory . '/css/' . $this->content_type_name . '_public_styles.css'
+			$this->directory . 'css/' . $this->content_type_name . '_public_styles.css'
 		);
 
 		// public scripts
 		wp_enqueue_script(
 			$this->content_type_name . '_public_scripts',
-			$this->directory . '/js/' . $this->content_type_name, '_public_scripts.js', array('jquery')
+			$this->directory . 'js/' . $this->content_type_name, '_public_scripts.js', array('jquery')
 		);
 
 	}
@@ -107,7 +107,7 @@ class event_showcase {
 			//admin styles
 			wp_enqueue_style(
 				$this->content_type_name . '_public_styles', 
-				$this->directory . '/css/' . $this->content_type_name . '_admin_styles.css'
+				$this->directory . 'css/' . $this->content_type_name . '_admin_styles.css'
 			);
 
 			//jquery ui styles for datepicker
@@ -119,19 +119,19 @@ class event_showcase {
 			//timepicker styles
 			wp_enqueue_style(
 				'jquery_ui_timepicker_styles',
-				$this->directory . '/css/jquery.ui.timepicker.css'
+				$this->directory . 'css/jquery.ui.timepicker.css'
 			);
 
 			//timepicker script
 			wp_enqueue_script(
 				'jquery_ui_timepicker_script',
-				$this->directory . '/js/jquery.ui.timepicker.js'
+				$this->directory . 'js/jquery.ui.timepicker.js'
 			);		
 
 			//admin scripts (depends on datepicker and timepicker)
 			wp_enqueue_script(
 				$this->content_type_name . '_public_scripts', 
-				$this->directory . '/js/' . $this->content_type_name . '_admin_scripts.js', 
+				$this->directory . 'js/' . $this->content_type_name . '_admin_scripts.js', 
 				array('jquery','jquery-ui-datepicker','jquery_ui_timepicker_script')
 			); 
 
@@ -196,10 +196,90 @@ class event_showcase {
 	// display the visual output of the meta box in admin (where we will save our meta data)
 	public function display_function_for_content_type_meta_box($post) {
 
+		// collect meta information
+		$event_subtitle = get_post_meta($post->ID,'event_subtitle', true);
+		$event_start_date = get_post_meta($post->ID,'event_start_date', true);
+		$event_end_date = get_post_meta($post->ID,'event_end_date', true);
+		$event_start_time = get_post_meta($post->ID,'event_start_time', true);
+		$event_end_time = get_post_meta($post->ID,'event_end_time', true);
+		$event_location = get_post_meta($post->ID,'event_location', true);
+		$event_price = get_post_meta($post->ID,'event_price', true);
+
+		// set nonce
+		wp_nonce_field($this->content_type_name . '_nonce', $this->content_type_name . '_nonce_field');
+
+		?>
+
+		<p>Enter additional information about your event below</p>
+		<div class="field-container">
+			<label for="event_subtitle">Subtitle</label>
+			<input type="text" name="event_subtitle" id="event_subtitle" value="<?php echo $event_subtitle; ?>"/>
+		</div>
+		<div class="field-container">
+			<label for="event_location">Event Location</label>
+			<textarea name="event_location" id="event_location"><?php echo $event_location; ?></textarea>
+		</div>
+		<div class="field-container">
+			<label for="event_start_date">Start Date</label>
+			<input type="text" name="event_start_date" id="event_start_date" class="admin-datepicker" value="<?php echo $event_start_date; ?>" required/>
+		</div>
+		<div class="field-container">
+			<label for="event_end_date">End Date</label>
+			<input type="text" name="event_end_date" id="event_end_date" class="admin-datepicker" value="<?php echo $event_end_date;  ?>" required/>
+		</div>
+		<div class="field-container">
+			<label for="event_start_time">Start Time</label>
+			<input type="text" name="event_start_time" id="event_start_time" class="admin-timepicker" value="<?php echo $event_start_time; ?>" required/>
+		</div>
+		<div class="field-container">
+			<label for="event_end_time">End Time</label>
+			<input type="text" name="event_end_time" id="event_end_time" class="admin-timepicker" value="<?php echo $event_end_time; ?>" required/>
+		</div>
+		<div class="field-container">
+			<label for="event_price">Price</label>
+			<input type="text" name="event_price" id="event_price"  value="<?php echo $event_price; ?>"/>
+		</div>
+		<?php
+
 	}
 
 	// when saving the custom content type, also save additional meta data
 	public function save_custom_content_type($post_id) {
+
+		//check for nonce
+		if(!isset($_POST[$this->content_type_name . '_nonce_field'])){
+			return $post_id;
+		}
+		//verify nonce
+		if(!wp_verify_nonce($_POST[$this->content_type_name . '_nonce_field'] , $this->content_type_name . '_nonce')){
+			return $post_id;
+		}
+		//check for autosaves
+		if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE){
+			return $post_id;
+		}
+		//check if the user can edit 
+		if(!current_user_can('edit_posts')){
+			return $post_id;
+		}
+		
+		//collect sanitized information
+		$event_subtitle =sanitize_text_field($_POST['event_subtitle']);
+		$event_start_date =sanitize_text_field($_POST['event_start_date']);
+		$event_end_date = sanitize_text_field($_POST['event_end_date']);
+		$event_start_time =sanitize_text_field($_POST['event_start_time']);
+		$event_end_time = sanitize_text_field($_POST['event_end_time']);
+		$event_location = sanitize_text_field(wpautop($_POST['event_location']));
+		$event_price = sanitize_text_field($_POST['event_price']);
+		
+		//save post meta
+		update_post_meta($post_id,'event_subtitle',$event_subtitle);
+		update_post_meta($post_id,'event_start_date',$event_start_date);
+		update_post_meta($post_id,'event_end_date',$event_end_date);
+		update_post_meta($post_id,'event_start_time',$event_start_time);
+		update_post_meta($post_id,'event_end_time',$event_end_time);
+		update_post_meta($post_id,'event_location',$event_location);
+		update_post_meta($post_id,'event_price', $event_price);
 
 	}
 
