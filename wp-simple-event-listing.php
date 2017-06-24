@@ -69,6 +69,14 @@ class event_showcase {
 	// check if we need to flush rewrite rules
 	public function check_flush_rewrite_rules() {
 
+		$has_been_flushed = get_option( $this->content_type_name, '_flush_rewrite_rules');
+
+		// if we havent' flushed rewrite rules, flush them (should be triggered only once)
+		if ( $has_been_flushed != true ) {
+			flush_rewrite_rules(true);
+			update_option( $this->content_type_name, '_flush_rewrite_rules', true);
+		}
+
 	}
 
 	// enqueue public scripts and styles
